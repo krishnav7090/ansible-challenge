@@ -1,15 +1,14 @@
-- hosts: frontend
-  become: true
-  vars:
-    backend_ip: "{{ hostvars['u21.local'].ansible_host }}"
+- name: Configure frontend (nginx reverse proxy)
+  hosts: frontend
+  become: yes
 
   tasks:
     - name: Install nginx
-      yum:
+      package:
         name: nginx
         state: present
 
-    - name: Configure nginx reverse proxy to Netdata
+    - name: Configure nginx reverse proxy to backend Netdata
       copy:
         dest: /etc/nginx/conf.d/netdata.conf
         content: |
@@ -17,7 +16,7 @@
               listen 80;
 
               location / {
-                  proxy_pass http://{{ backend_ip }}:19999;
+                  proxy_pass http://{{ hostvars['u21.local'].ansible_default_ipv4.address }}:19999;
                   proxy_set_header Host $host;
                   proxy_set_header X-Real-IP $remote_addr;
                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -27,8 +26,8 @@
     - name: Test nginx configuration
       command: nginx -t
 
-    - name: Start and enable nginx
+    - name: Restart nginx
       service:
         name: nginx
-        state: started
-        enabled: true
+        state: restarted
+        enabled: yes
