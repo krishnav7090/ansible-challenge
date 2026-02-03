@@ -1,12 +1,17 @@
 - hosts: backend
   become: true
   tasks:
-    - name: Install Netdata
-      shell: curl -s https://my-netdata.io/kickstart.sh | sh
-      args:
-        creates: /usr/sbin/netdata
 
-    - name: Start Netdata
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Netdata from Ubuntu repositories
+      apt:
+        name: netdata
+        state: present
+
+    - name: Ensure Netdata is running on port 19999
       service:
         name: netdata
         state: started
