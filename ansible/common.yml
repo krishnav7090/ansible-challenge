@@ -1,0 +1,14 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
+      when: ansible_os_family == "RedHat"
+
+    - name: Stop and disable firewalld
+      service:
+        name: firewalld
+        state: stopped
+        enabled: false
+      when: ansible_os_family == "RedHat"
