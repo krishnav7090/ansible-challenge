@@ -1,0 +1,13 @@
+- hosts: backend
+  become: true
+  tasks:
+    - name: Install Netdata
+      shell: curl -s https://my-netdata.io/kickstart.sh | sh
+      args:
+        creates: /usr/sbin/netdata
+
+    - name: Start Netdata
+      service:
+        name: netdata
+        state: started
+        enabled: true
