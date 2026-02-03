@@ -1,0 +1,24 @@
+- hosts: frontend
+  become: true
+  tasks:
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Configure nginx reverse proxy
+      copy:
+        dest: /etc/nginx/conf.d/netdata.conf
+        content: |
+          server {
+              listen 80;
+              location / {
+                  proxy_pass http://u21.local:19999;
+              }
+          }
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
