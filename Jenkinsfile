@@ -32,7 +32,7 @@ pipeline {
 
         stage('Run Ansible Playbooks') {
             steps {
-                sshagent(['ec2-user']) {
+                sshagent(['Master']) {
                     sh '''
                       cd ansible
                       ansible-playbook -i inventory.ini common.yml
