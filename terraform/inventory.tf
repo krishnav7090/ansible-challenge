@@ -1,14 +1,14 @@
 resource "local_file" "ansible_inventory" {
-  filename = "../ansible/inventory.ini"
+  filename = "${path.module}/../ansible/inventory.ini"
 
   content = <<EOF
 [frontend]
-c8.local ansible_host=${aws_instance.amazon_vm.public_ip} ansible_user=ec2-user
+c8.local ansible_host=${aws_instance.amazon_vm.public_ip}
 
 [backend]
-u21.local ansible_host=${aws_instance.ubuntu_vm.public_ip} ansible_user=ubuntu
+u21.local ansible_host=${aws_instance.ubuntu_vm.private_ip}
 
-[all:vars]
-ansible_ssh_private_key_file=~/.ssh/NV.pem
+[backend:vars]
+backend_ip=${aws_instance.ubuntu_vm.private_ip}
 EOF
 }
